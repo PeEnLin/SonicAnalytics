@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <title>SonicAnalytics Lab - Multimodal Cognitive Platform</title>
+  <style>
+    :root {
+      --bg: #0b1120;
+      --card: #1e293b;
+      --text: #f8fafc;
+      --accent: #38bdf8;
+      --warn: #ef4444;
+      --success: #22c55e;
+      --border: #334155;
+    }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1100px;
+      width: 100%;
+      margin-bottom: 12px;
+    }
+    .header h1 { margin: 0 0 4px 0; font-size: 24px; color: var(--accent); }
+    .header p { margin: 0; font-size: 13px; color: #94a3b8; }
+
+    .lang-group {
+      display: flex;
+      gap: 6px;
+      background: #0f172a;
+      padding: 4px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+    .lang-btn {
+      background: transparent;
+      border: none;
+      color: #94a3b8;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .lang-btn.active {
+      background: var(--accent);
+      color: #0b1120;
+    }
+
+    /* Pipeline Status Bar */
+    .pipeline-bar {
+      display: flex;
+      gap: 12px;
+      max-width: 1100px;
+      width: 100%;
+      margin-bottom: 16px;
+    }
+    .pipe-step {
+      flex: 1;
+      padding: 10px;
+      border-radius: 8px;
+      background: #0f172a;
+      border: 1px solid var(--border);
+      text-align: center;
+      font-size: 12px;
+      color: #64748b;
+      transition: all 0.3s;
+    }
+    .pipe-step.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(56, 189, 248, 0.1);
+      font-weight: bold;
+    }
+    .pipe-step.done {
+      border-color: var(--success);
+      color: var(--success);
+    }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 20px;
+      max-width: 1100px;
+      width: 100%;
+    }
+    .card {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 20px;
+      border: 1px solid var(--border);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    }
+
+    /* Task Arena */
+    #task-arena {
+      position: relative;
+      height: 320px;
+      background: #050811;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .top-info {
+      position: absolute;
+      top: 12px;
+      left: 16px;
+      right: 16px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      font-weight: bold;
+    }
+    #stage-label { color: var(--accent); }
+    #timer-display { color: #f59e0b; font-family: monospace; font-size: 16px; }
+
+    #stimulus-box { text-align: center; }
+    #target-display {
+      font-size: 52px;
+      font-weight: 800;
+      letter-spacing: 6px;
+      font-family: monospace;
+      color: #fff;
+    }
+    #comparison-display {
+      font-size: 30px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      font-family: monospace;
+      color: #94a3b8;
+      margin-top: 10px;
+    }
+    #peripheral-alert {
+      position: absolute;
+      top: 40px;
+      right: 20px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #1e293b;
+      border: 2px solid #334155;
+      transition: all 0.05s ease;
+    }
+    .alert-on {
+      background: var(--warn) !important;
+      border-color: #fca5a5 !important;
+      box-shadow: 0 0 25px var(--warn);
+    }
+
+    .key-guides {
+      display: flex;
+      justify-content: space-around;
+      width: 100%;
+      margin-top: 20px;
+      padding-top: 12px;
+      border-top: 1px solid #1e293b;
+      font-size: 12px;
+      color: #94a3b8;
+    }
+    .key-tag {
+      background: #334155;
+      color: #fff;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-weight: bold;
+      margin-right: 4px;
+    }
+
+    button.action-btn {
+      width: 100%;
+      padding: 14px;
+      border-radius: 8px;
+      border: none;
+      font-weight: 700;
+      font-size: 15px;
+      cursor: pointer;
+      background: var(--accent);
+      color: #0b1120;
+      margin-top: 16px;
+      transition: all 0.2s;
+    }
+    button.action-btn:hover { background: #7dd3fc; }
+    button.action-btn:disabled {
+      background: #334155;
+      color: #64748b;
+      cursor: not-allowed;
+    }
+
+    /* Stats */
+    .stats-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .stat-card {
+      background: #0f172a;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+    .stat-label { font-size: 12px; color: #94a3b8; margin-bottom: 4px; }
+    .stat-num { font-size: 18px; font-weight: bold; color: var(--accent); }
+
+    .chart-container { height: 230px; position: relative; margin-top: 10px; }
+
+    /* Modals */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.88);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+    }
+    .modal-content {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      width: 520px;
+      max-width: 90%;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    }
+    .tlx-item { margin-bottom: 12px; }
+    .tlx-label-row { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 3px; }
+    .tlx-slider { width: 100%; accent-color: var(--accent); }
+    #cloud-status { font-size: 12px; margin-top: 8px; text-align: center; }
+
+    .text-input {
+      width: 100%;
+      padding: 10px 12px;
+      box-sizing: border-box;
+      background: #0f172a;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: #fff;
+      font-size: 14px;
+      margin-top: 6px;
+    }
+
+    .lang-select-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 20px;
+    }
+    .lang-card-btn {
+      padding: 16px 8px;
+      background: #0f172a;
+      border: 1px solid var(--border);
+      color: #f8fafc;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .lang-card-btn:hover {
+      border-color: var(--accent);
+      background: rgba(56, 189, 248, 0.1);
+      color: var(--accent);
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <!-- Top bar: Header + Lang Switcher -->
+  <div class="top-nav">
+    <div class="header">
+      <h1 id="i18n-title">SonicAnalytics Lab</h1>
+      <p id="i18n-subtitle">多模態音響提示與認知負荷實驗平台</p>
+    </div>
+    <div class="lang-group">
+      <button class="lang-btn active" id="btn-lang-zh" onclick="setLanguage('zh')">繁體中文</button>
+      <button class="lang-btn" id="btn-lang-en" onclick="setLanguage('en')">English</button>
+      <button class="lang-btn" id="btn-lang-ja" onclick="setLanguage('ja')">日本語</button>
+    </div>
+  </div>
+
+  <!-- Pipeline Stages -->
+  <div class="pipeline-bar">
+    <div class="pipe-step" id="step-visual">1. 純視覺組 (30s)</div>
+    <div class="pipe-step" id="step-static">2. 固定逼逼聲 (30s)</div>
+    <div class="pipe-step" id="step-dynamic">3. 動態音響組 (30s)</div>
+  </div>
+
+  <div class="main-grid">
+    <!-- Left: Arena -->
+    <div class="card">
+      <div id="task-arena">
+        <div class="top-info">
+          <span id="stage-label">準備就緒</span>
+          <span id="timer-display">00:30</span>
+        </div>
+        <div id="peripheral-alert"></div>
+        
+        <div id="stimulus-box">
+          <div id="target-display">READY</div>
+          <div id="comparison-display">點擊下方啟動</div>
+        </div>
+
+        <div class="key-guides">
+          <span><span class="key-tag">J</span> <span id="i18n-key-j">文字相符</span></span>
+          <span><span class="key-tag">K</span> <span id="i18n-key-k">文字不符</span></span>
+          <span><span class="key-tag">Space</span> <span id="i18n-key-space">反應右上警告</span></span>
+        </div>
+      </div>
+
+      <button class="action-btn" id="start-pipeline-btn" onclick="startFullExperiment()">
+        啟動全自動實驗流程 (約 2 分鐘)
+      </button>
+    </div>
+
+    <!-- Right: Metrics & Output -->
+    <div class="card">
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-label" id="i18n-stat-rt">當前平均反應時間</div>
+          <div class="stat-num" id="avg-rt">-- ms</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label" id="i18n-stat-anova">One-way ANOVA (F檢定)</div>
+          <div class="stat-num" style="font-size:15px; color:#34d399;" id="anova-val">實驗完成後計算</div>
+        </div>
+      </div>
+
+      <div style="font-size:13px; font-weight:600; color:#cbd5e1; margin-bottom:6px;" id="i18n-radar-title">
+        NASA-TLX 三組認知負荷疊合雷達圖
+      </div>
+      <div class="chart-container">
+        <canvas id="radarChart"></canvas>
+      </div>
+
+      <div id="cloud-status"></div>
+
+      <button class="action-btn" style="background:#334155; color:#fff; font-size:13px;" id="csv-btn" onclick="exportCSV()" disabled>
+        匯出個人 CSV 備份 (data_sample.csv)
+      </button>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- [階段 1 彈窗] 語言先決選擇視窗 (Language Modal) -->
+  <!-- ======================================================== -->
+  <div class="modal-overlay" id="langModal">
+    <div class="modal-content" style="text-align: center;">
+      <h2 style="color:var(--accent); margin-top:0;">Select Language / 選擇語言</h2>
+      <p style="font-size:13px; color:#94a3b8;">請先選擇實驗語言以載入專屬評量量表與規範<br>Please select your preferred language for the experiment.</p>
+
+      <div class="lang-select-grid">
+        <div class="lang-card-btn" onclick="chooseLanguageAndProceed('zh')">繁體中文</div>
+        <div class="lang-card-btn" onclick="chooseLanguageAndProceed('en')">English</div>
+        <div class="lang-card-btn" onclick="chooseLanguageAndProceed('ja')">日本語</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- [階段 2 彈窗] 瀏覽器硬體自動偵測檢核視窗 (Device Precheck) -->
+  <!-- ======================================================== -->
+  <div class="modal-overlay" id="precheckModal" style="display:none;">
+    <div class="modal-content">
+      <h3 style="margin-top:0; color:var(--accent);" id="i18n-pre-title">實體設備與實驗環境規範檢核</h3>
+      <p style="font-size:13px; color:#cbd5e1; line-height:1.6;" id="i18n-pre-desc">
+        為確保反應時間（Reaction Time）微秒級測量之科學內部效度，排除觸控螢幕硬體延遲，本實驗嚴格限定於桌上型電腦或筆記型電腦進行。
+      </p>
+
+      <!-- 命中行動裝置時強制鎖死區塊 -->
+      <div id="device-warning" style="display:none; padding:14px; background:rgba(239,68,68,0.25); border:1px solid var(--warn); border-radius:8px; color:#fca5a5; font-size:13px; margin: 16px 0; line-height:1.5;">
+        <span id="i18n-device-block-msg">
+          ⛔ <b>系統偵測到行動/觸控裝置（手機或平板）</b><br>
+          本實驗需要實體鍵盤（J/K/Space）進行毫秒級響應測試。系統已鎖定進入權限，請改用一般電腦（PC / Mac）開啟此網址以參與實驗。
+        </span>
+      </div>
+
+      <!-- 命中合格電腦端時開放進入區塊 -->
+      <div id="device-allow">
+        <div style="margin-bottom:12px;">
+          <label style="font-size:12px; color:#94a3b8;" id="i18n-subj-label">受試者代號 (Subject ID / 匿名編號):</label>
+          <input type="text" id="input_subj_id" class="text-input" value="SUBJ_01">
+        </div>
+
+        <div style="margin-bottom:16px;">
+          <div style="font-size:12px; color:#34d399; margin-bottom:8px;" id="i18n-pass-msg">
+            ✓ 系統硬體檢測通過：已確認為桌上型/筆記型電腦設備。
+          </div>
+        </div>
+
+        <button class="action-btn primary" id="btn-enter-lab" onclick="confirmPrecheck()">
+          進入實驗平台
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- [階段 3 彈窗] NASA-TLX 評量表視窗 -->
+  <!-- ======================================================== -->
+  <div class="modal-overlay" id="tlxModal" style="display:none;">
+    <div class="modal-content">
+      <h3 style="margin-top:0; color:var(--accent);" id="modal-title">NASA-TLX 評量</h3>
+      <p style="font-size:12px; color:#94a3b8; margin-top:-6px;" id="modal-desc">請針對剛才這 30 秒的測試評定心智負荷：</p>
+
+      <div class="tlx-item">
+        <div class="tlx-label-row"><span id="lbl_mental">1. 精神需求 (Mental Demand)</span><span id="v_mental">50</span></div>
+        <input type="range" min="0" max="100" value="50" class="tlx-slider" oninput="v_mental.innerText=this.value" id="in_mental">
+      </div>
+      <div class="tlx-item">
+        <div class="tlx-label-row"><span id="lbl_physical">2. 身體需求 (Physical Demand)</span><span id="v_physical">25</span></div>
+        <input type="range" min="0" max="100" value="25" class="tlx-slider" oninput="v_physical.innerText=this.value" id="in_physical">
+      </div>
+      <div class="tlx-item">
+        <div class="tlx-label-row"><span id="lbl_temporal">3. 時間急迫感 (Temporal Demand)</span><span id="v_temporal">50</span></div>
+        <input type="range" min="0" max="100" value="50" class="tlx-slider" oninput="v_temporal.innerText=this.value" id="in_temporal">
+      </div>
+      <div class="tlx-item">
+        <div class="tlx-label-row"><span id="lbl_perf">4. 自我績效 (Performance)</span><span id="v_perf">60</span></div>
+        <input type="range" min="0" max="100" value="60" class="tlx-slider" oninput="v_perf.innerText=this.value" id="in_perf">
+      </div>
+      <div class="tlx-item">
+        <div class="tlx-label-row"><span id="lbl_effort">5. 努力程度 (Effort)</span><span id="v_effort">50</span></div>
+        <input type="range" min="0" max="100" value="50" class="tlx-slider" oninput="v_effort.innerText=this.value" id="in_effort">
+      </div>
+      <div class="tlx-item">
+        <div class="tlx-label-row"><span id="lbl_frust">6. 挫折與煩躁感 (Frustration)</span><span id="v_frust">40</span></div>
+        <input type="range" min="0" max="100" value="40" class="tlx-slider" oninput="v_frust.innerText=this.value" id="in_frust">
+      </div>
+
+      <button class="action-btn" style="margin-top:10px;" id="modal-submit-btn" onclick="submitTLX()">提交並進入下一階段</button>
+    </div>
+  </div>
+
+  <script>
+    // ==========================================
+    // 1. 多國語言字典 (i18n)
+    // ==========================================
+    let currentLang = 'zh';
+    const i18n = {
+      zh: {
+        title: "SonicAnalytics Lab",
+        subtitle: "多模態音響提示與認知負荷實驗平台 (HCI Dual-Task)",
+        stepVisual: "1. 純視覺組 (30s)",
+        stepStatic: "2. 固定逼逼聲 (30s)",
+        stepDynamic: "3. 動態音響組 (30s)",
+        ready: "準備就緒",
+        startBtn: "啟動全自動實驗流程 (約 2 分鐘)",
+        keyJ: "文字相符", keyK: "文字不符", keySpace: "反應右上警告",
+        statRt: "當前平均反應時間", statAnova: "One-way ANOVA (F檢定)",
+        radarTitle: "NASA-TLX 三組認知負荷疊合雷達圖",
+        csvBtn: "匯出個人 CSV 備份 (data_sample.csv)",
+        modalTitle: "NASA-TLX 主觀認知負荷評量",
+        modalDesc: "請針對剛才這 30 秒的測試，評定各項主觀心智負荷（0~100 分）：",
+        modalSubmit: "提交並進入下一階段",
+        lblMental: "1. 精神需求 (Mental Demand)",
+        lblPhysical: "2. 身體需求 (Physical Demand)",
+        lblTemporal: "3. 時間急迫感 (Temporal Demand)",
+        lblPerf: "4. 自我績效 (Performance)",
+        lblEffort: "5. 努力程度 (Effort)",
+        lblFrust: "6. 挫折與煩躁感 (Frustration)",
+        restText: "休息準備中...",
+        nextStage: "即將開始下一組",
+        finishText: "實驗全數完成！數據已寫入後台與本機",
+        preTitle: "實體設備與實驗環境規範檢核",
+        preDesc: "為確保反應時間（Reaction Time）微秒級測量之科學內部效度，排除觸控螢幕硬體延遲，本實驗嚴格限定於桌上型電腦或筆記型電腦進行。",
+        subjLabel: "受試者代號 (Subject ID / 匿名編號):",
+        enterLabBtn: "進入實驗平台",
+        passMsg: "✓ 系統硬體檢測通過：已確認為桌上型/筆記型電腦設備。",
+        blockMsg: "⛔ <b>系統偵測到行動/觸控裝置（手機或平板）</b><br>本實驗需要實體鍵盤（J/K/Space）進行毫秒級響應測試。系統已鎖定進入權限，請改用一般電腦（PC / Mac）開啟此網址以參與實驗。",
+        tlxLabels: ['精神需求', '身體需求', '時間急迫', '自我績效', '努力程度', '挫折感']
+      },
+      en: {
+        title: "SonicAnalytics Lab",
+        subtitle: "Multimodal Auditory & Cognitive Load Platform (HCI Dual-Task)",
+        stepVisual: "1. Visual Only (30s)",
+        stepStatic: "2. Static Beep (30s)",
+        stepDynamic: "3. Dynamic Audio (30s)",
+        ready: "READY",
+        startBtn: "Start Automated Pipeline (~2 mins)",
+        keyJ: "Match", keyK: "Mismatch", keySpace: "React to Alert",
+        statRt: "Current Mean RT", statAnova: "One-way ANOVA (F-Test)",
+        radarTitle: "NASA-TLX 3-Condition Workload Radar",
+        csvBtn: "Export Personal CSV (data_sample.csv)",
+        modalTitle: "NASA-TLX Subjective Workload Assessment",
+        modalDesc: "Rate your workload experienced during the last 30-second block (0-100):",
+        modalSubmit: "Submit & Proceed",
+        lblMental: "1. Mental Demand",
+        lblPhysical: "2. Physical Demand",
+        lblTemporal: "3. Temporal Demand",
+        lblPerf: "4. Performance",
+        lblEffort: "5. Effort",
+        lblFrust: "6. Frustration Level",
+        restText: "Resting...",
+        nextStage: "Next block starts in",
+        finishText: "Experiment Completed! Data successfully logged.",
+        preTitle: "Hardware & Environment Validation",
+        preDesc: "To ensure high scientific internal validity and eliminate touchscreen input latency, this experiment strictly requires a desktop or laptop with a physical keyboard.",
+        subjLabel: "Subject ID (Anonymous Code):",
+        enterLabBtn: "Enter Lab Platform",
+        passMsg: "✓ Hardware validation passed: Desktop/Laptop environment verified.",
+        blockMsg: "⛔ <b>Mobile / Touch Device Detected</b><br>This study requires a physical keyboard (J/K/Space) to measure millisecond reaction times accurately. Access is locked. Please reopen this URL using a PC or Mac.",
+        tlxLabels: ['Mental', 'Physical', 'Temporal', 'Performance', 'Effort', 'Frustration']
+      },
+      ja: {
+        title: "SonicAnalytics Lab",
+        subtitle: "多モーダル音響提示と認知負荷評価プラットフォーム (HCI Dual-Task)",
+        stepVisual: "1. 視覚単独条件 (30s)",
+        stepStatic: "2. 固定ビープ音 (30s)",
+        stepDynamic: "3. 動的音響提示 (30s)",
+        ready: "待機中",
+        startBtn: "自動実験パイプラインを開始 (約2分)",
+        keyJ: "一致", keyK: "不一致", keySpace: "周辺警告に反応",
+        statRt: "現在条件の平均反応時間", statAnova: "一元配置分散分析 (ANOVA)",
+        radarTitle: "NASA-TLX 3条件認知的負荷レーダーチャート",
+        csvBtn: "個人CSVデータを保存 (data_sample.csv)",
+        modalTitle: "NASA-TLX 主観的認知的負荷評価",
+        modalDesc: "直前の30秒間のタスクにおける主観的負荷を評価してください（0〜100）：",
+        modalSubmit: "提出して次へ進む",
+        lblMental: "1. 精神的要求 (Mental Demand)",
+        lblPhysical: "2. 身体的要求 (Physical Demand)",
+        lblTemporal: "3. 時間的切迫感 (Temporal Demand)",
+        lblPerf: "4. 作業成績 (Performance)",
+        lblEffort: "5. 努力度 (Effort)",
+        lblFrust: "6. フラストレーション (Frustration)",
+        restText: "休憩中...",
+        nextStage: "次の条件開始まで",
+        finishText: "実験完了！データは正常に記録されました",
+        preTitle: "実験環境および入力デバイスの事前確認",
+        preDesc: "ミリ秒単位の反応時間（RT）計測の精度を担保し、タッチパネルによる遅延バイアスを排除するため、本実験は物理キーボードを備えたPC環境に限定されています。",
+        subjLabel: "被験者ID (匿名コード):",
+        enterLabBtn: "環境を確認して実験室へ入室",
+        passMsg: "✓ ハードウェア検証合格：PC/ノートPC環境が確認されました。",
+        blockMsg: "⛔ <b>モバイル／タッチ端末が検出されました</b><br>ミリ秒精度の反応時間計測には物理キーボード（J/K/Space）が必要です。アクセスはロックされています。PCまたはMac端末から再アクセスしてください。",
+        tlxLabels: ['精神的要求', '身体的要求', '時間的切迫', '作業成績', '努力', 'フラストレーション']
+      }
+    };
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = document.getElementById(`btn-lang-${lang}`);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      const dict = i18n[lang];
+      document.getElementById('i18n-title').innerText = dict.title;
+      document.getElementById('i18n-subtitle').innerText = dict.subtitle;
+      document.getElementById('step-visual').innerText = dict.stepVisual;
+      document.getElementById('step-static').innerText = dict.stepStatic;
+      document.getElementById('step-dynamic').innerText = dict.stepDynamic;
+      document.getElementById('start-pipeline-btn').innerText = dict.startBtn;
+      document.getElementById('i18n-key-j').innerText = dict.keyJ;
+      document.getElementById('i18n-key-k').innerText = dict.keyK;
+      document.getElementById('i18n-key-space').innerText = dict.keySpace;
+      document.getElementById('i18n-stat-rt').innerText = dict.statRt;
+      document.getElementById('i18n-stat-anova').innerText = dict.statAnova;
+      document.getElementById('i18n-radar-title').innerText = dict.radarTitle;
+      document.getElementById('csv-btn').innerText = dict.csvBtn;
+
+      document.getElementById('modal-desc').innerText = dict.modalDesc;
+      document.getElementById('modal-submit-btn').innerText = dict.modalSubmit;
+      document.getElementById('lbl_mental').innerText = dict.lblMental;
+      document.getElementById('lbl_physical').innerText = dict.lblPhysical;
+      document.getElementById('lbl_temporal').innerText = dict.lblTemporal;
+      document.getElementById('lbl_perf').innerText = dict.lblPerf;
+      document.getElementById('lbl_effort').innerText = dict.lblEffort;
+      document.getElementById('lbl_frust').innerText = dict.lblFrust;
+
+      // Precheck Modal Text
+      document.getElementById('i18n-pre-title').innerText = dict.preTitle;
+      document.getElementById('i18n-pre-desc').innerText = dict.preDesc;
+      document.getElementById('i18n-subj-label').innerText = dict.subjLabel;
+      document.getElementById('btn-enter-lab').innerText = dict.enterLabBtn;
+      document.getElementById('i18n-pass-msg').innerText = dict.passMsg;
+      document.getElementById('i18n-device-block-msg').innerHTML = dict.blockMsg;
+
+      if (radar) {
+        radar.data.labels = dict.tlxLabels;
+        radar.update();
+      }
+    }
+
+    // ==========================================
+    // 2. 嚴格硬體自動檢測 (HTML5 / JS Feature Detection)
+    // ==========================================
+    let subjectUUID = "SUBJ_01";
+
+    function chooseLanguageAndProceed(lang) {
+      setLanguage(lang);
+      document.getElementById('langModal').style.display = 'none';
+      document.getElementById('precheckModal').style.display = 'flex';
+      runStrictHardwareAudit();
+    }
+
+    function runStrictHardwareAudit() {
+      // 1. 檢測 User-Agent 行動裝置關鍵字
+      const ua = navigator.userAgent || navigator.vendor || window.opera;
+      const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
+
+      // 2. 檢測指針粗細（行動觸控屏指針為 coarse，精密滑鼠/軌跡板為 fine）
+      const hasCoarsePointer = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+
+      // 3. 檢測觸控點數量
+      const hasMultiTouch = navigator.maxTouchPoints && navigator.maxTouchPoints > 2;
+
+      // 4. 檢測螢幕視窗寬度（低於 768px 高機率為手機垂直螢幕）
+      const isNarrowScreen = window.innerWidth < 768;
+
+      // 只要符合任何一項行動裝置特徵，立刻阻擋
+      const isMobileDevice = isMobileUA || (hasCoarsePointer && hasMultiTouch) || isNarrowScreen;
+
+      if (isMobileDevice) {
+        document.getElementById('device-warning').style.display = 'block';
+        document.getElementById('device-allow').style.display = 'none';
+      } else {
+        document.getElementById('device-warning').style.display = 'none';
+        document.getElementById('device-allow').style.display = 'block';
+      }
+    }
+
+    function confirmPrecheck() {
+      const inputId = document.getElementById('input_subj_id').value.trim();
+      if (inputId) subjectUUID = inputId;
+      document.getElementById('precheckModal').style.display = 'none';
+    }
+
+    // ==========================================
+    // 3. 核心實驗流程與音響合成引擎
+    // ==========================================
+    let audioCtx = null;
+    const stages = ['visual', 'static', 'dynamic'];
+    let currentStageIndex = 0;
+    let isRunning = false;
+    let secondsLeft = 30;
+    let timerInterval = null;
+    let trialInterval = null;
+    let alertTimeout = null;
+    let alertActive = false;
+    let alertStartTime = 0;
+
+    let trialsData = [];
+    let tlxData = { visual: null, static: null, dynamic: null };
+
+    const CLOUD_ENDPOINT = "http://127.0.0.1:8000/api/v1/submit";
+
+    function initAudio() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+
+    function playAudio(mode) {
+      if (!audioCtx || mode === 'visual') return;
+      const now = audioCtx.currentTime;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      if (mode === 'static') {
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(440, now);
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+        osc.start(now);
+        osc.stop(now + 0.15);
+      } else if (mode === 'dynamic') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(620, now);
+        osc.frequency.exponentialRampToValueAtTime(950, now + 0.08);
+        gain.gain.setValueAtTime(0.001, now);
+        gain.gain.linearRampToValueAtTime(0.25, now + 0.015);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.14);
+        osc.start(now);
+        osc.stop(now + 0.14);
+      }
+    }
+
+    function startFullExperiment() {
+      initAudio();
+      document.getElementById('start-pipeline-btn').disabled = true;
+      currentStageIndex = 0;
+      trialsData = [];
+      tlxData = { visual: null, static: null, dynamic: null };
+      runStage(currentStageIndex);
+    }
+
+    function runStage(idx) {
+      const mode = stages[idx];
+      updateStepUI(idx);
+      document.getElementById('stage-label').innerText = `${i18n[currentLang].ready}: ${mode}`;
+      secondsLeft = 30;
+      document.getElementById('timer-display').innerText = `00:${secondsLeft < 10 ? '0' : ''}${secondsLeft}`;
+
+      isRunning = true;
+      startCentralTask();
+      scheduleAlert(mode);
+
+      timerInterval = setInterval(() => {
+        secondsLeft--;
+        document.getElementById('timer-display').innerText = `00:${secondsLeft < 10 ? '0' : ''}${secondsLeft}`;
+        if (secondsLeft <= 0) endCurrentBlock();
+      }, 1000);
+    }
+
+    function updateStepUI(activeIdx) {
+      stages.forEach((s, i) => {
+        const el = document.getElementById(`step-${s}`);
+        el.className = 'pipe-step';
+        if (i < activeIdx) el.classList.add('done');
+        if (i === activeIdx) el.classList.add('active');
+      });
+    }
+
+    function startCentralTask() {
+      const chars = ['7B29', '4M12', '9X88', '3K01', '8R55'];
+      trialInterval = setInterval(() => {
+        if (!isRunning) return;
+        const base = chars[Math.floor(Math.random() * chars.length)];
+        const isSame = Math.random() > 0.5;
+        document.getElementById('target-display').innerText = base;
+        document.getElementById('comparison-display').innerText = isSame ? base : base.slice(0, 3) + (Math.floor(Math.random()*9));
+      }, 1200);
+    }
+
+    function scheduleAlert(mode) {
+      if (!isRunning) return;
+      const nextDelay = Math.random() * 2000 + 1500;
+      alertTimeout = setTimeout(() => {
+        if (!isRunning) return;
+        alertActive = true;
+        document.getElementById('peripheral-alert').classList.add('alert-on');
+        alertStartTime = performance.now();
+        playAudio(mode);
+      }, nextDelay);
+    }
+
+    function handleResponse() {
+      if (!alertActive) return;
+      const responseTime = performance.now();
+      const rt = Math.round(responseTime - alertStartTime);
+      alertActive = false;
+      document.getElementById('peripheral-alert').classList.remove('alert-on');
+
+      const mode = stages[currentStageIndex];
+      trialsData.push({
+        subject_id: subjectUUID,
+        trial_id: trialsData.length + 1,
+        condition: mode,
+        rt: rt,
+        t_stimulus: alertStartTime.toFixed(2),
+        t_response: responseTime.toFixed(2),
+        lang: currentLang,
+        device: "physical_keyboard_desktop"
+      });
+
+      const currArr = trialsData.filter(d => d.condition === mode).map(d => d.rt);
+      const avg = Math.round(currArr.reduce((a,b)=>a+b,0) / currArr.length);
+      document.getElementById('avg-rt').innerText = `${avg} ms (N=${currArr.length})`;
+
+      scheduleAlert(mode);
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'Space') { e.preventDefault(); handleResponse(); }
+      if (e.code === 'KeyJ' || e.code === 'KeyK') {
+        const el = document.getElementById('comparison-display');
+        el.style.color = '#38bdf8';
+        setTimeout(() => el.style.color = '#94a3b8', 150);
+      }
+    });
+
+    function endCurrentBlock() {
+      clearInterval(timerInterval);
+      clearInterval(trialInterval);
+      clearTimeout(alertTimeout);
+      isRunning = false;
+      alertActive = false;
+      document.getElementById('peripheral-alert').classList.remove('alert-on');
+
+      const mode = stages[currentStageIndex];
+      document.getElementById('modal-title').innerText = `${mode.toUpperCase()} - ${i18n[currentLang].modalTitle}`;
+      document.getElementById('tlxModal').style.display = 'flex';
+    }
+
+    function submitTLX() {
+      const mode = stages[currentStageIndex];
+      tlxData[mode] = {
+        mental: parseInt(document.getElementById('in_mental').value),
+        physical: parseInt(document.getElementById('in_physical').value),
+        temporal: parseInt(document.getElementById('in_temporal').value),
+        perf: parseInt(document.getElementById('in_perf').value),
+        effort: parseInt(document.getElementById('in_effort').value),
+        frust: parseInt(document.getElementById('in_frust').value)
+      };
+
+      document.getElementById('tlxModal').style.display = 'none';
+      updateRadar();
+
+      currentStageIndex++;
+      if (currentStageIndex < stages.length) {
+        startRestCountdown(5, () => runStage(currentStageIndex));
+      } else {
+        finishAllExperiment();
+      }
+    }
+
+    function startRestCountdown(sec, callback) {
+      let r = sec;
+      document.getElementById('stage-label').innerText = i18n[currentLang].restText;
+      document.getElementById('target-display').innerText = "REST";
+      document.getElementById('comparison-display').innerText = `${i18n[currentLang].nextStage} (${r}s)`;
+
+      const restTimer = setInterval(() => {
+        r--;
+        document.getElementById('comparison-display').innerText = `${i18n[currentLang].nextStage} (${r}s)`;
+        if (r <= 0) {
+          clearInterval(restTimer);
+          callback();
+        }
+      }, 1000);
+    }
+
+    function finishAllExperiment() {
+      updateStepUI(3);
+      document.getElementById('stage-label').innerText = i18n[currentLang].finishText;
+      document.getElementById('target-display').innerText = "FINISH";
+      document.getElementById('comparison-display').innerText = "Thank you!";
+      document.getElementById('start-pipeline-btn').disabled = false;
+      document.getElementById('csv-btn').disabled = false;
+      document.getElementById('csv-btn').style.background = "var(--accent)";
+      document.getElementById('csv-btn').style.color = "#0b1120";
+
+      calculateANOVA();
+      uploadToBackend();
+    }
+
+    function uploadToBackend() {
+      const statusEl = document.getElementById('cloud-status');
+      statusEl.style.color = "#38bdf8";
+      statusEl.innerText = "☁️ 正在將數據同步至資料庫...";
+
+      const payload = {
+        subject_id: subjectUUID,
+        created_at: new Date().toISOString(),
+        trials: trialsData,
+        tlx: tlxData
+      };
+
+      fetch(CLOUD_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      })
+      .then(res => res.json())
+      .then(data => {
+        statusEl.style.color = "#22c55e";
+        statusEl.innerText = `✅ 數據已成功入庫 (受試者 ID: ${subjectUUID})`;
+      })
+      .catch(err => {
+        statusEl.style.color = "#ef4444";
+        statusEl.innerText = "⚠️ 後端同步中斷（請點下方按鈕下載 CSV 備份）";
+        console.error(err);
+      });
+    }
+
+    function calculateANOVA() {
+      const groups = {
+        visual: trialsData.filter(d => d.condition === 'visual').map(d => d.rt),
+        static: trialsData.filter(d => d.condition === 'static').map(d => d.rt),
+        dynamic: trialsData.filter(d => d.condition === 'dynamic').map(d => d.rt)
+      };
+
+      const k = 3;
+      const totalN = trialsData.length;
+      if (groups.visual.length >= 2 && groups.static.length >= 2 && groups.dynamic.length >= 2) {
+        const grandMean = trialsData.reduce((a, b) => a + b.rt, 0) / totalN;
+
+        let ss_b = 0;
+        for (let key in groups) {
+          const arr = groups[key];
+          const grpMean = arr.reduce((a, b) => a + b, 0) / arr.length;
+          ss_b += arr.length * Math.pow(grpMean - grandMean, 2);
+        }
+
+        let ss_w = 0;
+        for (let key in groups) {
+          const arr = groups[key];
+          const grpMean = arr.reduce((a, b) => a + b, 0) / arr.length;
+          arr.forEach(val => ss_w += Math.pow(val - grpMean, 2));
+        }
+
+        const df_b = k - 1;
+        const df_w = totalN - k;
+        const ms_b = ss_b / df_b;
+        const ms_w = ss_w / df_w;
+        const f_val = (ms_b / ms_w).toFixed(2);
+
+        document.getElementById('anova-val').innerText = `F(${df_b}, ${df_w}) = ${f_val}`;
+      }
+    }
+
+    let radar;
+    function initRadar() {
+      const ctx = document.getElementById('radarChart').getContext('2d');
+      radar = new Chart(ctx, {
+        type: 'radar',
+        data: {
+          labels: i18n[currentLang].tlxLabels,
+          datasets: []
+        },
+        options: {
+          scales: { r: { min: 0, max: 100, grid: { color: '#334155' }, ticks: { display: false } } },
+          plugins: { legend: { labels: { color: '#cbd5e1', font: { size: 11 } } } },
+          maintainAspectRatio: false
+        }
+      });
+    }
+
+    function updateRadar() {
+      radar.data.datasets = [];
+      const colors = {
+        visual: { border: '#ef4444', bg: 'rgba(239, 68, 68, 0.2)' },
+        static: { border: '#eab308', bg: 'rgba(234, 179, 8, 0.2)' },
+        dynamic: { border: '#38bdf8', bg: 'rgba(56, 189, 248, 0.2)' }
+      };
+
+      for (let mode in tlxData) {
+        if (tlxData[mode]) {
+          const d = tlxData[mode];
+          radar.data.datasets.push({
+            label: mode.toUpperCase(),
+            data: [d.mental, d.physical, d.temporal, d.perf, d.effort, d.frust],
+            borderColor: colors[mode].border,
+            backgroundColor: colors[mode].bg
+          });
+        }
+      }
+      radar.update();
+    }
+
+    function exportCSV() {
+      let csv = "Subject_ID,Device_Type,Trial_ID,Condition,T_Stimulus_ms,T_Response_ms,Reaction_Time_ms,Language,Mental_Demand,Physical_Demand,Temporal_Demand,Performance,Effort,Frustration\n";
+      trialsData.forEach(row => {
+        const tlx = tlxData[row.condition] || { mental: "", physical: "", temporal: "", perf: "", effort: "", frust: "" };
+        csv += `${row.subject_id},${row.device},${row.trial_id},${row.condition},${row.t_stimulus},${row.t_response},${row.rt},${row.lang},${tlx.mental},${tlx.physical},${tlx.temporal},${tlx.perf},${tlx.effort},${tlx.frust}\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `SonicAnalytics_${subjectUUID}.csv`;
+      a.click();
+    }
+
+    window.onload = function() {
+      initRadar();
+      // 頁面載入時直接鎖在語系選擇視窗
+      document.getElementById('langModal').style.display = 'flex';
+    };
+  </script>
+</body>
+</html>
