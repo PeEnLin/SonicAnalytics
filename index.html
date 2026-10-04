@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
+
 <head>
   <meta charset="UTF-8">
   <title>SonicAnalytics Lab - Multimodal Cognitive Platform</title>
@@ -13,6 +14,7 @@
       --success: #22c55e;
       --border: #334155;
     }
+
     body {
       margin: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -23,6 +25,7 @@
       align-items: center;
       padding: 20px;
     }
+
     .top-nav {
       display: flex;
       justify-content: space-between;
@@ -31,8 +34,18 @@
       width: 100%;
       margin-bottom: 12px;
     }
-    .header h1 { margin: 0 0 4px 0; font-size: 24px; color: var(--accent); }
-    .header p { margin: 0; font-size: 13px; color: #94a3b8; }
+
+    .header h1 {
+      margin: 0 0 4px 0;
+      font-size: 24px;
+      color: var(--accent);
+    }
+
+    .header p {
+      margin: 0;
+      font-size: 13px;
+      color: #94a3b8;
+    }
 
     .lang-group {
       display: flex;
@@ -42,6 +55,7 @@
       border-radius: 8px;
       border: 1px solid var(--border);
     }
+
     .lang-btn {
       background: transparent;
       border: none;
@@ -52,6 +66,7 @@
       font-weight: bold;
       cursor: pointer;
     }
+
     .lang-btn.active {
       background: var(--accent);
       color: #0b1120;
@@ -65,6 +80,7 @@
       width: 100%;
       margin-bottom: 16px;
     }
+
     .pipe-step {
       flex: 1;
       padding: 10px;
@@ -76,12 +92,14 @@
       color: #64748b;
       transition: all 0.3s;
     }
+
     .pipe-step.active {
       border-color: var(--accent);
       color: var(--accent);
       background: rgba(56, 189, 248, 0.1);
       font-weight: bold;
     }
+
     .pipe-step.done {
       border-color: var(--success);
       color: var(--success);
@@ -94,12 +112,13 @@
       max-width: 1100px;
       width: 100%;
     }
+
     .card {
       background: var(--card);
       border-radius: 12px;
       padding: 20px;
       border: 1px solid var(--border);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
     }
 
     /* Task Arena */
@@ -114,6 +133,7 @@
       align-items: center;
       justify-content: center;
     }
+
     .top-info {
       position: absolute;
       top: 12px;
@@ -124,10 +144,21 @@
       font-size: 13px;
       font-weight: bold;
     }
-    #stage-label { color: var(--accent); }
-    #timer-display { color: #f59e0b; font-family: monospace; font-size: 16px; }
 
-    #stimulus-box { text-align: center; }
+    #stage-label {
+      color: var(--accent);
+    }
+
+    #timer-display {
+      color: #f59e0b;
+      font-family: monospace;
+      font-size: 16px;
+    }
+
+    #stimulus-box {
+      text-align: center;
+    }
+
     #target-display {
       font-size: 52px;
       font-weight: 800;
@@ -135,6 +166,7 @@
       font-family: monospace;
       color: #fff;
     }
+
     #comparison-display {
       font-size: 30px;
       font-weight: 700;
@@ -143,6 +175,7 @@
       color: #94a3b8;
       margin-top: 10px;
     }
+
     #peripheral-alert {
       position: absolute;
       top: 40px;
@@ -154,6 +187,7 @@
       border: 2px solid #334155;
       transition: all 0.05s ease;
     }
+
     .alert-on {
       background: var(--warn) !important;
       border-color: #fca5a5 !important;
@@ -170,6 +204,7 @@
       font-size: 12px;
       color: #94a3b8;
     }
+
     .key-tag {
       background: #334155;
       color: #fff;
@@ -192,7 +227,11 @@
       margin-top: 16px;
       transition: all 0.2s;
     }
-    button.action-btn:hover { background: #7dd3fc; }
+
+    button.action-btn:hover {
+      background: #7dd3fc;
+    }
+
     button.action-btn:disabled {
       background: #334155;
       color: #64748b;
@@ -206,27 +245,46 @@
       gap: 12px;
       margin-bottom: 16px;
     }
+
     .stat-card {
       background: #0f172a;
       padding: 12px;
       border-radius: 8px;
       border: 1px solid var(--border);
     }
-    .stat-label { font-size: 12px; color: #94a3b8; margin-bottom: 4px; }
-    .stat-num { font-size: 18px; font-weight: bold; color: var(--accent); }
 
-    .chart-container { height: 230px; position: relative; margin-top: 10px; }
+    .stat-label {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-bottom: 4px;
+    }
+
+    .stat-num {
+      font-size: 18px;
+      font-weight: bold;
+      color: var(--accent);
+    }
+
+    .chart-container {
+      height: 230px;
+      position: relative;
+      margin-top: 10px;
+    }
 
     /* Modals */
     .modal-overlay {
       position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.88);
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.88);
       display: flex;
       align-items: center;
       justify-content: center;
       z-index: 2000;
     }
+
     .modal-content {
       background: var(--card);
       border: 1px solid var(--border);
@@ -234,12 +292,30 @@
       padding: 24px;
       width: 520px;
       max-width: 90%;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
     }
-    .tlx-item { margin-bottom: 12px; }
-    .tlx-label-row { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 3px; }
-    .tlx-slider { width: 100%; accent-color: var(--accent); }
-    #cloud-status { font-size: 12px; margin-top: 8px; text-align: center; }
+
+    .tlx-item {
+      margin-bottom: 12px;
+    }
+
+    .tlx-label-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      margin-bottom: 3px;
+    }
+
+    .tlx-slider {
+      width: 100%;
+      accent-color: var(--accent);
+    }
+
+    #cloud-status {
+      font-size: 12px;
+      margin-top: 8px;
+      text-align: center;
+    }
 
     .text-input {
       width: 100%;
@@ -259,6 +335,7 @@
       gap: 12px;
       margin-top: 20px;
     }
+
     .lang-card-btn {
       padding: 16px 8px;
       background: #0f172a;
@@ -270,6 +347,7 @@
       text-align: center;
       transition: all 0.2s;
     }
+
     .lang-card-btn:hover {
       border-color: var(--accent);
       background: rgba(56, 189, 248, 0.1);
@@ -278,6 +356,7 @@
   </style>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+
 <body>
 
   <!-- Top bar: Header + Lang Switcher -->
@@ -309,7 +388,7 @@
           <span id="timer-display">00:30</span>
         </div>
         <div id="peripheral-alert"></div>
-        
+
         <div id="stimulus-box">
           <div id="target-display">READY</div>
           <div id="comparison-display">點擊下方啟動</div>
@@ -349,7 +428,8 @@
 
       <div id="cloud-status"></div>
 
-      <button class="action-btn" style="background:#334155; color:#fff; font-size:13px;" id="csv-btn" onclick="exportCSV()" disabled>
+      <button class="action-btn" style="background:#334155; color:#fff; font-size:13px;" id="csv-btn"
+        onclick="exportCSV()" disabled>
         匯出個人 CSV 備份 (data_sample.csv)
       </button>
     </div>
@@ -361,7 +441,8 @@
   <div class="modal-overlay" id="langModal">
     <div class="modal-content" style="text-align: center;">
       <h2 style="color:var(--accent); margin-top:0;">Select Language / 選擇語言</h2>
-      <p style="font-size:13px; color:#94a3b8;">請先選擇實驗語言以載入專屬評量量表與規範<br>Please select your preferred language for the experiment.</p>
+      <p style="font-size:13px; color:#94a3b8;">請先選擇實驗語言以載入專屬評量量表與規範<br>Please select your preferred language for the
+        experiment.</p>
 
       <div class="lang-select-grid">
         <div class="lang-card-btn" onclick="chooseLanguageAndProceed('zh')">繁體中文</div>
@@ -382,7 +463,8 @@
       </p>
 
       <!-- 命中行動裝置時強制鎖死區塊 -->
-      <div id="device-warning" style="display:none; padding:14px; background:rgba(239,68,68,0.25); border:1px solid var(--warn); border-radius:8px; color:#fca5a5; font-size:13px; margin: 16px 0; line-height:1.5;">
+      <div id="device-warning"
+        style="display:none; padding:14px; background:rgba(239,68,68,0.25); border:1px solid var(--warn); border-radius:8px; color:#fca5a5; font-size:13px; margin: 16px 0; line-height:1.5;">
         <span id="i18n-device-block-msg">
           ⛔ <b>系統偵測到行動/觸控裝置（手機或平板）</b><br>
           本實驗需要實體鍵盤（J/K/Space）進行毫秒級響應測試。系統已鎖定進入權限，請改用一般電腦（PC / Mac）開啟此網址以參與實驗。
@@ -418,28 +500,37 @@
       <p style="font-size:12px; color:#94a3b8; margin-top:-6px;" id="modal-desc">請針對剛才這 30 秒的測試評定心智負荷：</p>
 
       <div class="tlx-item">
-        <div class="tlx-label-row"><span id="lbl_mental">1. 精神需求 (Mental Demand)</span><span id="v_mental">50</span></div>
-        <input type="range" min="0" max="100" value="50" class="tlx-slider" oninput="v_mental.innerText=this.value" id="in_mental">
+        <div class="tlx-label-row"><span id="lbl_mental">1. 精神需求 (Mental Demand)</span><span id="v_mental">50</span>
+        </div>
+        <input type="range" min="0" max="100" value="50" class="tlx-slider" oninput="v_mental.innerText=this.value"
+          id="in_mental">
       </div>
       <div class="tlx-item">
-        <div class="tlx-label-row"><span id="lbl_physical">2. 身體需求 (Physical Demand)</span><span id="v_physical">25</span></div>
-        <input type="range" min="0" max="100" value="25" class="tlx-slider" oninput="v_physical.innerText=this.value" id="in_physical">
+        <div class="tlx-label-row"><span id="lbl_physical">2. 身體需求 (Physical Demand)</span><span
+            id="v_physical">25</span></div>
+        <input type="range" min="0" max="100" value="25" class="tlx-slider" oninput="v_physical.innerText=this.value"
+          id="in_physical">
       </div>
       <div class="tlx-item">
-        <div class="tlx-label-row"><span id="lbl_temporal">3. 時間急迫感 (Temporal Demand)</span><span id="v_temporal">50</span></div>
-        <input type="range" min="0" max="100" value="50" class="tlx-slider" oninput="v_temporal.innerText=this.value" id="in_temporal">
+        <div class="tlx-label-row"><span id="lbl_temporal">3. 時間急迫感 (Temporal Demand)</span><span
+            id="v_temporal">50</span></div>
+        <input type="range" min="0" max="100" value="50" class="tlx-slider" oninput="v_temporal.innerText=this.value"
+          id="in_temporal">
       </div>
       <div class="tlx-item">
         <div class="tlx-label-row"><span id="lbl_perf">4. 自我績效 (Performance)</span><span id="v_perf">60</span></div>
-        <input type="range" min="0" max="100" value="60" class="tlx-slider" oninput="v_perf.innerText=this.value" id="in_perf">
+        <input type="range" min="0" max="100" value="60" class="tlx-slider" oninput="v_perf.innerText=this.value"
+          id="in_perf">
       </div>
       <div class="tlx-item">
         <div class="tlx-label-row"><span id="lbl_effort">5. 努力程度 (Effort)</span><span id="v_effort">50</span></div>
-        <input type="range" min="0" max="100" value="50" class="tlx-slider" oninput="v_effort.innerText=this.value" id="in_effort">
+        <input type="range" min="0" max="100" value="50" class="tlx-slider" oninput="v_effort.innerText=this.value"
+          id="in_effort">
       </div>
       <div class="tlx-item">
         <div class="tlx-label-row"><span id="lbl_frust">6. 挫折與煩躁感 (Frustration)</span><span id="v_frust">40</span></div>
-        <input type="range" min="0" max="100" value="40" class="tlx-slider" oninput="v_frust.innerText=this.value" id="in_frust">
+        <input type="range" min="0" max="100" value="40" class="tlx-slider" oninput="v_frust.innerText=this.value"
+          id="in_frust">
       </div>
 
       <button class="action-btn" style="margin-top:10px;" id="modal-submit-btn" onclick="submitTLX()">提交並進入下一階段</button>
@@ -655,8 +746,7 @@
     let trialsData = [];
     let tlxData = { visual: null, static: null, dynamic: null };
 
-    const CLOUD_ENDPOINT = "http://127.0.0.1:8000/api/v1/submit";
-
+    const CLOUD_ENDPOINT = "https://absorption-republic-visitor-flight.trycloudflare.com/api/v1/submit";
     function initAudio() {
       if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     }
@@ -731,7 +821,7 @@
         const base = chars[Math.floor(Math.random() * chars.length)];
         const isSame = Math.random() > 0.5;
         document.getElementById('target-display').innerText = base;
-        document.getElementById('comparison-display').innerText = isSame ? base : base.slice(0, 3) + (Math.floor(Math.random()*9));
+        document.getElementById('comparison-display').innerText = isSame ? base : base.slice(0, 3) + (Math.floor(Math.random() * 9));
       }, 1200);
     }
 
@@ -767,7 +857,7 @@
       });
 
       const currArr = trialsData.filter(d => d.condition === mode).map(d => d.rt);
-      const avg = Math.round(currArr.reduce((a,b)=>a+b,0) / currArr.length);
+      const avg = Math.round(currArr.reduce((a, b) => a + b, 0) / currArr.length);
       document.getElementById('avg-rt').innerText = `${avg} ms (N=${currArr.length})`;
 
       scheduleAlert(mode);
@@ -864,16 +954,16 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
       })
-      .then(res => res.json())
-      .then(data => {
-        statusEl.style.color = "#22c55e";
-        statusEl.innerText = `✅ 數據已成功入庫 (受試者 ID: ${subjectUUID})`;
-      })
-      .catch(err => {
-        statusEl.style.color = "#ef4444";
-        statusEl.innerText = "⚠️ 後端同步中斷（請點下方按鈕下載 CSV 備份）";
-        console.error(err);
-      });
+        .then(res => res.json())
+        .then(data => {
+          statusEl.style.color = "#22c55e";
+          statusEl.innerText = `✅ 數據已成功入庫 (受試者 ID: ${subjectUUID})`;
+        })
+        .catch(err => {
+          statusEl.style.color = "#ef4444";
+          statusEl.innerText = "⚠️ 後端同步中斷（請點下方按鈕下載 CSV 備份）";
+          console.error(err);
+        });
     }
 
     function calculateANOVA() {
@@ -966,11 +1056,12 @@
       a.click();
     }
 
-    window.onload = function() {
+    window.onload = function () {
       initRadar();
       // 頁面載入時直接鎖在語系選擇視窗
       document.getElementById('langModal').style.display = 'flex';
     };
   </script>
 </body>
+
 </html>
