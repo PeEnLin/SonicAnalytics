@@ -1,70 +1,52 @@
-# 🔬 SonicAnalytics Lab
+# SonicAnalytics Lab: Multimodal Auditory & Cognitive Load Platform (HCI Dual-Task)
 
-<div align="center">
-
-**Multimodal Auditory Cueing & Cognitive Workload Experimental Platform (HCI Dual-Task)**  
-多模態音響提示與認知負荷實驗平台 ｜ 多モーダル音響提示と認知的負荷評価プラットフォーム
-
-[![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688.svg)](https://fastapi.tiangolo.com/)
-[![Docker](https://img.shields.io/badge/Container-Docker-2496ED.svg)](https://www.docker.com/)
-[![Audio API](https://img.shields.io/badge/Audio-Web_Audio_API-orange.svg)](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API)
-
-### 🚀 [點此直接啟動線上實驗平台 (Live Demo)](https://peenlin.github.io/SonicAnalytics/)
-
-[English](#-english) | [日本語](#-日本語) | [繁體中文](#-繁體中文)
-
-</div>
+A web-based interactive psychophysical and human-computer interaction (HCI) evaluation platform designed to quantify cognitive load and situational awareness under dual-task conditions using adaptive auditory feedback.
 
 ---
 
-## 🌐 English
+## 📌 Overview / 概要
 
-### Project Overview
-**SonicAnalytics Lab** is a web-based Human-Computer Interaction (HCI) dual-task experimental platform designed to evaluate human cognitive workload, attentional tunneling, and peripheral response latency under varying auditory modalities. 
+In modern high-workload and visually demanding environments, visual-only feedback often leads to cognitive overload and delayed reaction times. **SonicAnalytics Lab** is an empirical HCI experimentation tool that explores how multimodal auditory feedback (static vs. dynamic auditory cues) affects cognitive performance, response latency, and mental workload.
 
-Participants perform a central visual working memory task (`J`/`K` discrimination) while simultaneously reacting to sporadic peripheral visual/auditory alerts (`Spacebar`). The system captures millisecond-precision reaction times, collects subjective workload metrics via NASA-TLX scales, and performs on-the-fly statistical inferencing.
-
-### Key Capabilities
-- **Three-Condition Automated Protocol**:
-  - `Condition 1`: Visual Only baseline (30s)
-  - `Condition 2`: Static 440Hz Square-wave Beep cueing (30s)
-  - `Condition 3`: Dynamic Synthesized Audio cueing (620Hz → 950Hz Sine sweep, 30s)
-- **Zero-Latency Sound Synthesis**: Native Web Audio API generates auditory stimuli programmatically without external audio file loading delays.
-- **Ecological Preflight Validation**: Automated hardware heuristics detect pointer precision and multi-touch to block mobile devices and eliminate touchscreen latency bias.
-- **Dual-Task Cognitive Assessment**:
-  - Millisecond reaction time logging per stimulus trial.
-  - Multi-dimensional NASA-TLX workload radar visualization.
-  - Client-side real-time One-Way ANOVA ($F$-statistic) computation.
-- **Resilient Backend Pipeline**: Headless ingestion via FastAPI (`/api/v1/submit`), schema-enforced with Pydantic, stored in SQLite, and containerized via Docker.
+現代の視覚情報過多なタスク環境において、視覚提示への過度な依存は認知負荷（Cognitive Overload）を著しく増大させます。**SonicAnalytics Lab** は、聴覚刺激（静的音響提示・動的音響フィードバック）が人間の認知負荷や状況認識に与える影響を定量的に検証・評価するための HCI 二重課題（Dual-Task）実験プラットフォームです。
 
 ---
 
-## 🇯🇵 日本語
+## 🔬 Key Experimental Features / 実験機能
 
-### プロジェクト概要
-**SonicAnalytics Lab** は、ヒューマンコンピュータインタラクション（HCI）および実験心理物理学向けに設計された二重課題（Dual-Task）認知的負荷評価プラットフォームです。高負荷タスク環境下において、異なる音響提示手法（純粋視覚、固定周波数ビープ音、動的変調音）が注意の狭窄（Cognitive Tunneling）および周辺アラートへの反応時間（Reaction Time）に与える影響を検証します。
-
-### 主な機能
-- **3段階自動実験プロトコル**：視覚単独条件 (30s) → 固定ビープ音 (30s) → 動的音響提示 (30s)。
-- **Web Audio API によるゼロ遅延音声合成**：オシレーター（OscillatorNode）で直接波形を生成し、ロード遅延を完全排除。
-- **ハードウェア事前検証**：タッチ端末・スマートフォンを自動検出し、ミリ秒精度の測定のためPC環境（物理キーボード）を強制。
-- **認知的指標のリアルタイム解析**：各試行の反応時間計測、NASA-TLX 6次元レーダーチャート表示、一元配置分散分析（ANOVA）による $F$ 値算出。
-- **堅牢なデータパイプライン**：FastAPI + SQLite + Docker によるデータ永続化。
-
----
-
-## 🇹🇼 繁體中文
-
-### 專案簡介
-**SonicAnalytics Lab** 是一套專為人機互動（HCI）與實驗心理物理學打造的雙任務（Dual-Task）認知負荷評估平台。本實驗旨在探討於高心智負荷作業情境下，不同音響提示模態（純視覺、固定頻率蜂鳴、動態頻率調變音）對使用者注意力窄化（Cognitive Tunneling）與周邊警報反應時間（Reaction Time）之影響。
-
-### 核心特性
-- **三階段標準化實驗流程**：純視覺基準組 (30s) ➔ 固定逼逼聲組 (30s) ➔ 動態頻譜提示組 (30s)。
-- **Web Audio API 原生音訊合成**：利用底層振盪器（OscillatorNode）實時合成音效，免除外部檔案載入延遲，確保微秒級實驗內部效度。
-- **嚴格環境硬體偵測鎖定**：自動分析指針精度與觸控點，強制阻絕手機與平板裝置，排除觸控屏硬體延遲誤差。
-- **即時認知指標運算**：毫秒級反應時間追蹤、NASA-TLX 六大心智維度雷達圖、前端即時單因子變異數分析（One-way ANOVA）。
-- **輕量化高容錯後端**：FastAPI 結構化 API 接收、SQLite 本地持久化資料庫與 Docker 容器化配置。
+1. **HCI Dual-Task Paradigm (二重課題実験パラダイム)**:
+   - **Primary Task**: Visual matching task requiring sustained visual attention.
+   - **Secondary Task**: Auditory/visual alert reaction task measuring situational response latency.
+2. **Three Experimental Conditions (3つの比較実験条件)**:
+   - `Condition 1`: Visual Only (Baseline)
+   - `Condition 2`: Visual + Static Beep
+   - `Condition 3`: Visual + Dynamic Audio Feedback (Adaptive Spectral Mapping)
+3. **Cognitive Workload & Statistical Assessment (定量的認知負荷・統計解析)**:
+   - Real-time Reaction Time (Mean RT) tracking.
+   - **NASA-TLX 6-Dimension Workload Assessment**: Visualized via interactive radar chart (Mental, Physical, Temporal, Performance, Effort, Frustration).
+   - Automated inferential statistics (**One-way ANOVA / F-Test**) for cross-condition validation.
+   - One-click dataset export (`.csv`) for psychometric and behavioral data pipelines.
 
 ---
 
-### 檔案結構
+## 🛠️ System Architecture & Tech Stack / システム構成
+
+- **Frontend / UI**: Streamlit (Reactive Web Interface, Multilingual Support: 繁體中文 / English / 日本語)
+- **Backend / Real-time Processing**: Python (NumPy, SciPy, Pandas, Statsmodels)
+- **Deployment**: Docker Containerized, compatible with cloud/local hosting
+
+---
+
+## 🎯 Research Applications / 修士研究への展開
+
+- **Auditory Display & Sonification**: Designing optimal auditory cues to reduce mental workload without inducing acoustic fatigue.
+- **Cognitive Ergonomics & Assistive Tech**: Sensory substitution and multimodal interaction design for visually restricted environments.
+- **Human-in-the-Loop Evaluation**: Combining subjective scales (NASA-TLX) with physiological/behavioral telemetry for robust user studies.
+
+---
+
+## 👤 Author / 開発者
+
+- **Pei-En Lin (林 沛恩)**
+- Background: Music & Computer Science (National Tsing Hua University)
+- Contact: [0979641610pn@gmail.com]
